@@ -3,6 +3,8 @@
 #include "Styling/SlateTypes.h"
 #include "Styling/StyleColors.h"
 #include "Styling/SlateWidgetStyleContainerBase.h"
+#include "Brushes/SlateRoundedBoxBrush.h"
+#include "Brushes/SlateColorBrush.h"
 
 #include "Components/Button.h"
 #include "Components/TextBlock.h"

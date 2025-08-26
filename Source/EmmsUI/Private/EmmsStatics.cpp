@@ -8,6 +8,7 @@
 #include "MMPopupWindow.h"
 #include "Engine/World.h"
 #include "Engine/Engine.h"
+#include "Engine/GameViewportClient.h"
 
 #include "StartAngelscriptHeaders.h"
 #include "as_context.h"

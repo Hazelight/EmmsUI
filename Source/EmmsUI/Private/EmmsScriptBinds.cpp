@@ -5,6 +5,7 @@
 #include "EmmsAttribute.h"
 #include "Components/PanelWidget.h"
 #include "EmmsStatics.h"
+#include "UObject/UObjectIterator.h"
 
 #include "StartAngelscriptHeaders.h"
 #include "as_context.h"

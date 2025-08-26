@@ -3,6 +3,8 @@
 #include "EmmsStatics.h"
 #include "EmmsDefaultWidgetStyles.h"
 #include "Fonts/FontMeasure.h"
+#include "Styling/SlateBrush.h"
+#include "Brushes/SlateColorBrush.h"
 
 #include "AngelscriptBinds.h"
 #include "AngelscriptManager.h"

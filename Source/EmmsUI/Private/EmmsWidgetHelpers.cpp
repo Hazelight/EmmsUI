@@ -19,6 +19,8 @@
 #include "Components/Image.h"
 #include "Components/EditableTextBox.h"
 #include "Brushes/SlateRoundedBoxBrush.h"
+#include "Brushes/SlateColorBrush.h"
+#include "Brushes/SlateImageBrush.h"
 #include "Widgets/Text/STextBlock.h"
 #include "EmmsDefaultWidgetStyles.h"
 #include "Styling/AppStyle.h"

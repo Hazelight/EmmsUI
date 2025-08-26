@@ -6,6 +6,7 @@
 #include "DetailLayoutBuilder.h"
 #include "DetailCategoryBuilder.h"
 
+#include "Modules/ModuleManager.h"
 #include "Components/DetailsView.h"
 #include "Widgets/Layout/SBox.h"
 

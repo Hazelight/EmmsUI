@@ -10,6 +10,7 @@
 #include "WorkspaceMenuStructure.h"
 #include "EmmsEditorWidgetHelpers.h"
 #include "PropertyEditorModule.h"
+#include "UObject/UObjectIterator.h"
 
 IMPLEMENT_MODULE(FEmmsUIEditorModule, EmmsUIEditor);
 
