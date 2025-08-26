@@ -1,6 +1,7 @@
 #include "EmmsUISubsystem.h"
 #include "EmmsUISubsystem.h"
 #include "Engine/GameViewportClient.h"
+#include "Misc/PackageName.h"
 
 #if WITH_EDITOR
 #include "IAssetViewport.h"
