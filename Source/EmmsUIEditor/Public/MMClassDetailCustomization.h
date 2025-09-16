@@ -106,6 +106,10 @@ public:
 	UFUNCTION(ScriptCallable)
 	void EditCategory(FName CategoryName, const FString& CategoryDisplayName = TEXT(""), EMMDetailCategoryType CategoryType = EMMDetailCategoryType::Default);
 
+	// Sets the category's order in the details view where lower numbers appear first
+	UFUNCTION(ScriptCallable)
+	void SetCategorySortOrder(FName CategoryName, int SortOrder);
+
 	// Add a category's default properties to be shown at this position in the detail customization
 	UFUNCTION(ScriptCallable)
 	void AddAllCategoryDefaultProperties(FName CategoryName, bool bSimpleProperties = true, bool bAdvancedProperties = true);
