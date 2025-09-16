@@ -23,8 +23,9 @@ namespace UnrealBuildTool.Rules
 				"WorkspaceMenuStructure",
 				"ScriptableEditorWidgets",
 				"StructUtilsEditor",
-				"PropertyEditor"
+				"PropertyEditor",
+				"UMGEditor"
 			});
-		}
+		}		
 	}
 }

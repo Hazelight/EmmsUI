@@ -6,6 +6,8 @@
 #include "DetailLayoutBuilder.h"
 #include "DetailCategoryBuilder.h"
 
+#include "Components/AssetThumbnailWidget.h"
+
 #include "Modules/ModuleManager.h"
 #include "Components/DetailsView.h"
 #include "Widgets/Layout/SBox.h"
@@ -91,6 +93,14 @@ AS_FORCE_LINK const FAngelscriptBinds::FBind Bind_EmmsEditorWidgetHelpers((int32
 		mmUDetailsView_.Method("void SetStruct(?& StructRef, const FString& HeaderTitle) const", &UEmmsEditorWidgetHelpers::SetDetailsViewStruct);
 		FAngelscriptBinds::SetPreviousBindIsEditorOnly(true);
 	}
+
+	{
+		FAngelscriptBinds::FNamespace ns("mm");
+		FAngelscriptBinds::BindGlobalFunction("mm<UAssetThumbnailWidget> AssetThumbnail(UObject Object, int32 Resolution = 64)", &UEmmsEditorWidgetHelpers::AssetThumbnailFromObject);
+		FAngelscriptBinds::SetPreviousBindIsEditorOnly(true);
+		FAngelscriptBinds::BindGlobalFunction("mm<UAssetThumbnailWidget> AssetThumbnail(const FAssetData& AssetData, int32 Resolution = 64)", &UEmmsEditorWidgetHelpers::AssetThumbnailFromAssetData);
+		FAngelscriptBinds::SetPreviousBindIsEditorOnly(true);
+	}
 });
 
 TSharedRef<IDetailCustomization> FEmmsEditableInstancedStructDetailCustomization::MakeInstance()
@@ -136,4 +146,34 @@ void FEmmsEditableInstancedStructDetailCustomization::CustomizeDetails(IDetailLa
 
 	Category.InitiallyCollapsed(false);
 	Category.AddCustomBuilder(DataDetails);
+}
+
+FEmmsWidgetHandle UEmmsEditorWidgetHelpers::AssetThumbnailFromObject(UObject* Object, int32 Resolution)
+{
+	FEmmsWidgetHandle Widget = UEmmsStatics::AddWidget(UAssetThumbnailWidget::StaticClass());
+	if (Widget.Element == nullptr)
+		return Widget;
+
+	UAssetThumbnailWidget* ThumbnailWidget = Cast<UAssetThumbnailWidget>(Widget.Element->UMGWidget);
+	if (ThumbnailWidget)
+	{
+		ThumbnailWidget->SetResolution(FIntPoint(Resolution, Resolution));
+		ThumbnailWidget->SetAssetByObject(Object);
+	}
+	return Widget;
+}
+
+FEmmsWidgetHandle UEmmsEditorWidgetHelpers::AssetThumbnailFromAssetData(const FAssetData& AssetData, int32 Resolution)
+{
+	FEmmsWidgetHandle Widget = UEmmsStatics::AddWidget(UAssetThumbnailWidget::StaticClass());
+	if (Widget.Element == nullptr)
+		return Widget;
+
+	UAssetThumbnailWidget* ThumbnailWidget = Cast<UAssetThumbnailWidget>(Widget.Element->UMGWidget);
+	if (ThumbnailWidget)
+	{
+		ThumbnailWidget->SetResolution(FIntPoint(Resolution, Resolution));
+		ThumbnailWidget->SetAsset(AssetData);
+	}
+	return Widget;
 }
