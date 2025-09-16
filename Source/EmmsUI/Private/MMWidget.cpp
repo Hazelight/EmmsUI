@@ -90,6 +90,7 @@ void UMMWidget::CallDraw(float InDeltaTime)
 	{
 		UEmmsStatics::BeginDraw(this, DefaultRootPanel);
 
+		FEditorScriptExecutionGuard ScopeAllowScript;
 		DrawWidget(InDeltaTime);
 		if (ExternalDrawFunction)
 			ExternalDrawFunction(this, InDeltaTime);

@@ -26,6 +26,7 @@ void UMMPopupWindow::Spawn()
 			if (bOpen)
 			{
 				bOpen = false;
+				FEditorScriptExecutionGuard ScopeAllowScript;
 				OnWindowClosed();
 			}
 
@@ -37,6 +38,7 @@ void UMMPopupWindow::Spawn()
 	MMWidget = NewObject<UMMWidget>(this, UMMWidget::StaticClass(), NAME_None, RF_Transient);
 	MMWidget->ExternalDrawFunction = [this](UMMWidget* Widget, float DeltaTime)
 	{
+		FEditorScriptExecutionGuard ScopeAllowScript;
 		DrawWindow(DeltaTime);
 	};
 
@@ -45,6 +47,8 @@ void UMMPopupWindow::Spawn()
 	FSlateApplication::Get().AddWindow(SlateWindow.ToSharedRef());
 
 	bOpen = true;
+	
+	FEditorScriptExecutionGuard ScopeAllowScript;
 	OnWindowOpened();
 }
 

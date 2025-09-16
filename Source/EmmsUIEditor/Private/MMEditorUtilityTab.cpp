@@ -40,6 +40,7 @@ void UMMEditorUtilityTab::Spawn()
 			if (bOpen)
 			{
 				bOpen = false;
+				FEditorScriptExecutionGuard ScopeAllowScript;
 				OnTabClosed();
 			}
 
@@ -51,12 +52,14 @@ void UMMEditorUtilityTab::Spawn()
 	MMWidget = NewObject<UMMWidget>(this, UMMWidget::StaticClass(), NAME_None, RF_Transient);
 	MMWidget->ExternalDrawFunction = [this](UMMWidget* Widget, float DeltaTime)
 	{
+		FEditorScriptExecutionGuard ScopeAllowScript;
 		DrawTab(DeltaTime);
 	};
 
 	SlateTab->SetContent(MMWidget->TakeWidget());
 
 	bOpen = true;
+	FEditorScriptExecutionGuard ScopeAllowScript;
 	OnTabOpened();
 }
 

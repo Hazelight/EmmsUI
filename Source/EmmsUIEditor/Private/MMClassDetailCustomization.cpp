@@ -33,6 +33,7 @@ void UMMClassDetailCustomization::CustomizeDetails(IDetailLayoutBuilder& DetailB
 			ObjectsBeingCustomized.Add(Ptr.Get());
 	}
 
+	FEditorScriptExecutionGuard ScopeAllowScript;
 	BP_CustomizeDetails();
 
 	ActiveDetailBuilder = nullptr;
@@ -52,7 +53,11 @@ void UMMClassDetailCustomization::Tick(float DeltaTime)
 		return;
 
 	if (GetClass()->ScriptTypePtr != nullptr)
+	{
+		FEditorScriptExecutionGuard ScopeAllowScript;
 		BP_Tick(DeltaTime);
+	}
+		
 }
 
 TStatId UMMClassDetailCustomization::GetStatId() const

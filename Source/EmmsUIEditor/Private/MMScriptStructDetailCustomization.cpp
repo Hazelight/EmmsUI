@@ -16,6 +16,7 @@ FMMScriptStructDetailCustomizationWrapper::~FMMScriptStructDetailCustomizationWr
 	if (Customization.IsValid())
 	{
 		Customization->Wrapper = nullptr;
+		FEditorScriptExecutionGuard ScopeAllowScript;
 		Customization->OnRemoved();
 		Customization->DeleteCustomization();
 		Customization.Reset();
@@ -406,6 +407,7 @@ void UMMScriptStructDetailCustomization::Tick(float DeltaTime)
 	{
 		if (HasStructValue())
 		{
+			FEditorScriptExecutionGuard ScopeAllowScript;
 			BP_Tick(DeltaTime);
 		}
 	}
