@@ -8,6 +8,7 @@
 #include "EmmsStatics.h"
 #include "EmmsEditorWidgetHelpers.generated.h"
 
+class UAssetThumbnailWidget;
 struct FAssetData;
 
 UCLASS()
@@ -23,6 +24,9 @@ public:
 
 	static FEmmsWidgetHandle AssetThumbnailFromObject(UObject* Object, int32 Resolution);
 	static FEmmsWidgetHandle AssetThumbnailFromAssetData(const FAssetData& AssetData, int32 Resolution);
+
+private:
+    static bool IsAssetThumbnailWidgetChanged(UAssetThumbnailWidget* ThumbnailWidget, const FAssetData& NewAssetData, int32 NewResolution);
 };
 
 UCLASS(AutoExpandCategories="Struct")

@@ -150,17 +150,21 @@ void FEmmsEditableInstancedStructDetailCustomization::CustomizeDetails(IDetailLa
 
 FEmmsWidgetHandle UEmmsEditorWidgetHelpers::AssetThumbnailFromObject(UObject* Object, int32 Resolution)
 {
-	FEmmsWidgetHandle Widget = UEmmsStatics::AddWidget(UAssetThumbnailWidget::StaticClass());
-	if (Widget.Element == nullptr)
-		return Widget;
+    FEmmsWidgetHandle Widget = UEmmsStatics::AddWidget(UAssetThumbnailWidget::StaticClass());
+    if (Widget.Element == nullptr)
+        return Widget;
 
-	UAssetThumbnailWidget* ThumbnailWidget = Cast<UAssetThumbnailWidget>(Widget.Element->UMGWidget);
-	if (ThumbnailWidget)
-	{
-		ThumbnailWidget->SetResolution(FIntPoint(Resolution, Resolution));
-		ThumbnailWidget->SetAssetByObject(Object);
-	}
-	return Widget;
+    UAssetThumbnailWidget* ThumbnailWidget = Cast<UAssetThumbnailWidget>(Widget.Element->UMGWidget);
+    if (ThumbnailWidget)
+    {
+        if (IsAssetThumbnailWidgetChanged(ThumbnailWidget, FAssetData(Object), Resolution))
+        {
+            const FIntPoint DesiredRes(Resolution, Resolution);
+            ThumbnailWidget->SetResolution(DesiredRes);
+            ThumbnailWidget->SetAssetByObject(Object);
+        }
+    }
+    return Widget;
 }
 
 FEmmsWidgetHandle UEmmsEditorWidgetHelpers::AssetThumbnailFromAssetData(const FAssetData& AssetData, int32 Resolution)
@@ -172,8 +176,44 @@ FEmmsWidgetHandle UEmmsEditorWidgetHelpers::AssetThumbnailFromAssetData(const FA
 	UAssetThumbnailWidget* ThumbnailWidget = Cast<UAssetThumbnailWidget>(Widget.Element->UMGWidget);
 	if (ThumbnailWidget)
 	{
-		ThumbnailWidget->SetResolution(FIntPoint(Resolution, Resolution));
-		ThumbnailWidget->SetAsset(AssetData);
+	        if (IsAssetThumbnailWidgetChanged(ThumbnailWidget, AssetData, Resolution))
+	        {
+	            const FIntPoint DesiredRes(Resolution, Resolution);
+	            ThumbnailWidget->SetResolution(DesiredRes);
+	            ThumbnailWidget->SetAsset(AssetData);
+	        }
 	}
 	return Widget;
+}
+
+bool UEmmsEditorWidgetHelpers::IsAssetThumbnailWidgetChanged(UAssetThumbnailWidget* ThumbnailWidget, const FAssetData& NewAssetData, int32 NewResolution)
+{
+    if (ThumbnailWidget == nullptr)
+        return true;
+    
+    const FIntPoint NewRes(NewResolution, NewResolution);
+    const bool bResChanged = ThumbnailWidget->GetResolution() != NewRes;
+    
+    if (bResChanged)
+    {
+        return true;
+    }
+    
+    // Access the private AssetToShow property via reflection
+    static FStructProperty* AssetProp = FindFProperty<FStructProperty>(UAssetThumbnailWidget::StaticClass(), FName("AssetToShow"));
+
+    ensureMsgf(AssetProp != nullptr, TEXT("UAssetThumbnailWidget::AssetToShow not found. Class may have changed."));
+
+    if (AssetProp)
+    {
+        const FAssetData* CurrentAsset = AssetProp->ContainerPtrToValuePtr<FAssetData>(ThumbnailWidget);
+
+        if (CurrentAsset)
+        {
+            bool bAssetChanged = *CurrentAsset != NewAssetData;
+            return bAssetChanged;
+        }
+    }
+    
+    return true;
 }
