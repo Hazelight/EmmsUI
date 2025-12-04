@@ -430,13 +430,16 @@ void FMMDummyDetailCustomization::OnWorldCleanup(UWorld* World, bool bSessionEnd
 
 FMMDummyDetailCustomization::~FMMDummyDetailCustomization()
 {
-	FWorldDelegates::LevelRemovedFromWorld.RemoveAll(this);
+	FWorldDelegates::OnWorldCleanup.RemoveAll(this);
 
 	if (Customization != nullptr)
 	{
 		Customization->LastDetailBuilder = nullptr;
-		Customization->DestroyDetails();
-		Customization->MarkAsGarbage();
+		if (!IsEngineExitRequested())
+		{
+			Customization->DestroyDetails();
+			Customization->MarkAsGarbage();
+		}
 	}
 }
 
