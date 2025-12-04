@@ -415,6 +415,12 @@ void FMMDummyDetailCustomization::OnWorldCleanup(UWorld* World, bool bSessionEnd
 		&& (!IsValid(Customization->GetCustomizedObject()) || !Customization->GetCustomizedObject()->IsAsset())
 	)
 	{
+		if (Customization->GetWorld() != World)
+		{
+			// Do not kill the customization if the world does not match, (e.g., in case of a thumbnail widget world being destroyed)
+			return;
+		}
+		
 		Customization->LastDetailBuilder = nullptr;
 		Customization->ObjectsBeingCustomized.Reset();
 		Customization->MarkAsGarbage();
