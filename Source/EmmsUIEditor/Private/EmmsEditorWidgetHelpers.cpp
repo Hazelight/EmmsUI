@@ -5,6 +5,7 @@
 #include "InstancedStructDetails.h"
 #include "DetailLayoutBuilder.h"
 #include "DetailCategoryBuilder.h"
+#include "MMSinglePropertyValue.h"
 
 #include "Components/AssetThumbnailWidget.h"
 
@@ -18,7 +19,7 @@ void UEmmsEditorWidgetHelpers::SetDetailsViewObject(FEmmsWidgetHandle* Widget, U
 {
 	if (Widget->Element == nullptr)
 		return;
-	UDetailsView* DetailsView = Cast<UDetailsView>(Widget->Element->UMGWidget);
+	UPropertyViewBase* DetailsView = Cast<UPropertyViewBase>(Widget->Element->UMGWidget);
 	if (DetailsView == nullptr)
 		return;
 	DetailsView->SetObject(Object);
@@ -40,7 +41,7 @@ void UEmmsEditorWidgetHelpers::SetDetailsViewStruct(FEmmsWidgetHandle* Widget, v
 		return;
 	}
 
-	UDetailsView* DetailsView = Cast<UDetailsView>(Widget->Element->UMGWidget);
+	UPropertyViewBase* DetailsView = Cast<UPropertyViewBase>(Widget->Element->UMGWidget);
 	if (DetailsView == nullptr)
 		return;
 
@@ -85,12 +86,12 @@ AS_FORCE_LINK const FAngelscriptBinds::FBind Bind_EmmsEditorWidgetHelpers((int32
 		return;
 
 	{
-		auto mmUDetailsView_ = FAngelscriptBinds::ExistingClass("mm<UDetailsView>");
-		mmUDetailsView_.Method("void SetObject(UObject Object) const", &UEmmsEditorWidgetHelpers::SetDetailsViewObject);
+		auto mmUPropertyViewBase_ = FAngelscriptBinds::ExistingClass("mm<UPropertyViewBase>");
+		mmUPropertyViewBase_.Method("void SetObject(UObject Object) const", &UEmmsEditorWidgetHelpers::SetDetailsViewObject);
 		FAngelscriptBinds::SetPreviousBindIsEditorOnly(true);
-		mmUDetailsView_.Method("void SetStruct(?& StructRef) const", &UEmmsEditorWidgetHelpers::SetDetailsViewStruct_NoTitle);
+		mmUPropertyViewBase_.Method("void SetStruct(?& StructRef) const", &UEmmsEditorWidgetHelpers::SetDetailsViewStruct_NoTitle);
 		FAngelscriptBinds::SetPreviousBindIsEditorOnly(true);
-		mmUDetailsView_.Method("void SetStruct(?& StructRef, const FString& HeaderTitle) const", &UEmmsEditorWidgetHelpers::SetDetailsViewStruct);
+		mmUPropertyViewBase_.Method("void SetStruct(?& StructRef, const FString& HeaderTitle) const", &UEmmsEditorWidgetHelpers::SetDetailsViewStruct);
 		FAngelscriptBinds::SetPreviousBindIsEditorOnly(true);
 	}
 
@@ -99,6 +100,8 @@ AS_FORCE_LINK const FAngelscriptBinds::FBind Bind_EmmsEditorWidgetHelpers((int32
 		FAngelscriptBinds::BindGlobalFunction("mm<UAssetThumbnailWidget> AssetThumbnail(UObject Object, int32 Resolution = 64)", &UEmmsEditorWidgetHelpers::AssetThumbnailFromObject);
 		FAngelscriptBinds::SetPreviousBindIsEditorOnly(true);
 		FAngelscriptBinds::BindGlobalFunction("mm<UAssetThumbnailWidget> AssetThumbnail(const FAssetData& AssetData, int32 Resolution = 64)", &UEmmsEditorWidgetHelpers::AssetThumbnailFromAssetData);
+		FAngelscriptBinds::SetPreviousBindIsEditorOnly(true);
+		FAngelscriptBinds::BindGlobalFunction("mm<UMMSinglePropertyValue> EditablePropertyValue(UObject Object, const FName& PropertyName, bool bShowResetToDefault = false)", &UEmmsEditorWidgetHelpers::EditablePropertyValue);
 		FAngelscriptBinds::SetPreviousBindIsEditorOnly(true);
 	}
 });
@@ -184,6 +187,37 @@ FEmmsWidgetHandle UEmmsEditorWidgetHelpers::AssetThumbnailFromAssetData(const FA
 	        }
 	}
 	return Widget;
+}
+
+FEmmsWidgetHandle UEmmsEditorWidgetHelpers::EditablePropertyValue(UObject* Object, const FName& PropertyName, bool bShowResetToDefault)
+{
+	FEmmsWidgetHandle Widget = UEmmsStatics::AddWidget(UMMSinglePropertyValue::StaticClass());
+	if (Widget.Element == nullptr)
+		return Widget;
+
+	UMMSinglePropertyValue* ValueWidget = Cast<UMMSinglePropertyValue>(Widget.Element->UMGWidget);
+	if (ValueWidget != nullptr)
+	{
+		bool bRefresh = false;
+
+		if (ValueWidget->PropertyName != PropertyName)
+		{
+			ValueWidget->PropertyName = PropertyName;
+			bRefresh = true;
+		}
+
+		if (ValueWidget->bShowResetToDefault != bShowResetToDefault)
+		{
+			ValueWidget->bShowResetToDefault = bShowResetToDefault;
+			bRefresh = true;
+		}
+
+		ValueWidget->SetObject(Object);
+		if (bRefresh)
+			ValueWidget->BuildContentWidget();
+	}
+
+	return FEmmsWidgetHandle();
 }
 
 bool UEmmsEditorWidgetHelpers::IsAssetThumbnailWidgetChanged(UAssetThumbnailWidget* ThumbnailWidget, const FAssetData& NewAssetData, int32 NewResolution)

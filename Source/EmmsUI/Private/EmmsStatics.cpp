@@ -420,6 +420,11 @@ void UEmmsStatics::EndWidget()
 
 FEmmsWidgetHandle UEmmsStatics::AddWidget(const TSubclassOf<UWidget>& WidgetType)
 {
+	if (WidgetType == nullptr)
+	{
+		return FEmmsWidgetHandle{nullptr, nullptr};
+	}
+
 	if (ImplicitHierarchy.Num() == 0)
 	{
 		FAngelscriptManager::Throw("No root is active to add widgets to");
