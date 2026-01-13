@@ -178,7 +178,9 @@ AS_FORCE_LINK const FAngelscriptBinds::FBind Bind_EmmsWidgets((int32)FAngelscrip
 							ParameterList += FString::Printf(
 								TEXT("%s&out %s"),
 								*ArgUsage.GetAngelscriptDeclaration(
-									FAngelscriptType::EAngelscriptDeclarationMode::PreResolvedObject
+									ArgUsage.IsUnresolvedObjectPointer()
+										? FAngelscriptType::EAngelscriptDeclarationMode::PreResolvedObject
+										: FAngelscriptType::EAngelscriptDeclarationMode::FunctionArgument
 								),
 								*FAngelscriptBindDatabase::GetNamingData(ArgIt->GetPathName(), ArgIt->GetName())
 							);
@@ -243,7 +245,9 @@ AS_FORCE_LINK const FAngelscriptBinds::FBind Bind_EmmsWidgets((int32)FAngelscrip
 							TEXT("void Set%s(const %s&in if_handle_then_const Value) const"),
 							*PropertyName,
 							*PropUsage.GetAngelscriptDeclaration(
-								FAngelscriptType::EAngelscriptDeclarationMode::PreResolvedObject
+								PropUsage.IsUnresolvedObjectPointer()
+								? FAngelscriptType::EAngelscriptDeclarationMode::PreResolvedObject
+								: FAngelscriptType::EAngelscriptDeclarationMode::FunctionArgument
 							)
 						),
 						&UEmmsStatics::SetAttributeValue,
@@ -261,7 +265,9 @@ AS_FORCE_LINK const FAngelscriptBinds::FBind Bind_EmmsWidgets((int32)FAngelscrip
 						FString::Printf(
 							TEXT("const %s& Get%s() const"),
 							*PropUsage.GetAngelscriptDeclaration(
-								FAngelscriptType::EAngelscriptDeclarationMode::PreResolvedObject
+								PropUsage.IsUnresolvedObjectPointer()
+								? FAngelscriptType::EAngelscriptDeclarationMode::PreResolvedObject
+								: FAngelscriptType::EAngelscriptDeclarationMode::FunctionReturnValue
 							),
 							*PropertyName
 						),
@@ -306,7 +312,9 @@ AS_FORCE_LINK const FAngelscriptBinds::FBind Bind_EmmsWidgets((int32)FAngelscrip
 
 				FString PropertyName = GetPropertyCanonicalName(Property);
 				FString ScriptTypeDecl = PropUsage.GetAngelscriptDeclaration(
-					FAngelscriptType::EAngelscriptDeclarationMode::PreResolvedObject
+					PropUsage.IsUnresolvedObjectPointer()
+						? FAngelscriptType::EAngelscriptDeclarationMode::PreResolvedObject
+						: FAngelscriptType::EAngelscriptDeclarationMode::FunctionArgument
 				);
 
 #if WITH_EDITOR
