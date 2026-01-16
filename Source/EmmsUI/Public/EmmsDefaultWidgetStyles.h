@@ -12,5 +12,6 @@ public:
 	static void ApplyDefaultStyleToNewWidget(UWidget* Widget);
 	static FSlateFontInfo& GetDefaultFont();
 	static const FButtonStyle& GetDefaultButtonStyle();
+	static const FEditableTextStyle& GetDefaultEditableTextStyle();
 
 };

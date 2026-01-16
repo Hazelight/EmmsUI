@@ -32,6 +32,9 @@ public:
 	static FEmmsAttributeSpecification* Attr_USizeBox_MinAspectRatio;
 	static FEmmsAttributeSpecification* Attr_USizeBox_MaxAspectRatio;
 	static FEmmsAttributeSpecification* Attr_UEditableTextBox_Text;
+	static FEmmsAttributeSpecification* Attr_UEditableText_Text;
+	static FEmmsAttributeSpecification* Attr_UEditableText_HintText;
+	static FEmmsAttributeSpecification* Attr_UEditableText_WidgetStyle;
 	static FEmmsAttributeSpecification* Attr_UBorder_Background;
 	static FDelegateProperty* Event_UBorder_OnMouseButtonDownEvent;
 	static FDelegateProperty* Event_UBorder_OnMouseDoubleClickEvent;
@@ -99,6 +102,7 @@ public:
 	static void SetToolTipText(FEmmsWidgetHandle* Widget, const FString& Text);
 
 	static FEmmsWidgetHandle EditableTextBox(FString& Value);
+	static FEmmsWidgetHandle EditableText(FString& Value, const FString& HintText, float FontSize = 0, const FLinearColor& Color = FLinearColor::White, bool bBold = false);
 	static FEmmsWidgetHandle SpinBox(double& Value);
 	static FEmmsWidgetHandle SpinBox_Constrained(double& Value, float MinValue, float MaxValue, float Delta = 0);
 	static FEmmsWidgetHandle Slider(double& Value, float MinValue = 0, float MaxValue = 1);

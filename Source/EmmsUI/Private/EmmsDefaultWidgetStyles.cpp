@@ -17,6 +17,7 @@
 #include "Components/EditableTextBox.h"
 
 #include "AngelscriptBinds.h"
+#include "Components/EditableText.h"
 
 static FSlateFontInfo* DefaultStyle_Font = nullptr;
 static FButtonStyle* DefaultStyle_Button = nullptr;
@@ -24,6 +25,7 @@ static FSpinBoxStyle* DefaultStyle_SpinBox = nullptr;
 static FSliderStyle* DefaultStyle_Slider = nullptr;
 static FScrollBarStyle* DefaultStyle_Scrollbar = nullptr;
 static FEditableTextBoxStyle* DefaultStyle_EditableTextBox = nullptr;
+static FEditableTextStyle* DefaultStyle_EditableText = nullptr;
 static FComboBoxStyle* DefaultStyle_ComboBox = nullptr;
 static FTableRowStyle* DefaultStyle_ComboBox_Item = nullptr;
 static FCheckBoxStyle* DefaultStyle_CheckBox = nullptr;
@@ -36,6 +38,11 @@ FSlateFontInfo& UEmmsDefaultWidgetStyles::GetDefaultFont()
 const FButtonStyle& UEmmsDefaultWidgetStyles::GetDefaultButtonStyle()
 {
 	return *DefaultStyle_Button;
+}
+
+const FEditableTextStyle& UEmmsDefaultWidgetStyles::GetDefaultEditableTextStyle()
+{
+	return *DefaultStyle_EditableText;
 }
 
 void UEmmsDefaultWidgetStyles::ApplyDefaultStyleToNewWidget(UWidget* Widget)
@@ -69,6 +76,10 @@ void UEmmsDefaultWidgetStyles::ApplyDefaultStyleToNewWidget(UWidget* Widget)
 	else if (UEditableTextBox* EditableTextBox = Cast<UEditableTextBox>(Widget))
 	{
 		EditableTextBox->WidgetStyle = *DefaultStyle_EditableTextBox;
+	}	
+	else if (UEditableText* EditableText = Cast<UEditableText>(Widget))
+	{
+		EditableText->WidgetStyle = *DefaultStyle_EditableText;
 	}
 	else if (UListView* ListView = Cast<UListView>(Widget))
 	{
@@ -106,6 +117,7 @@ AS_FORCE_LINK const FAngelscriptBinds::FBind Bind_EmmsDefaultWidgetStyles((int32
 		.SetPressedPadding(FMargin(12.f, 2.5f, 12.f, 0.5f));
 
 	DefaultStyle_EditableTextBox = new FEditableTextBoxStyle(FCoreStyle::Get().GetWidgetStyle<FEditableTextBoxStyle>("NormalEditableTextBox"));
+	DefaultStyle_EditableText = new FEditableTextStyle(FCoreStyle::Get().GetWidgetStyle<FEditableTextStyle>("NormalEditableText"));
 	DefaultStyle_Scrollbar = new FScrollBarStyle(FCoreStyle::Get().GetWidgetStyle<FScrollBarStyle>("Scrollbar"));
 	DefaultStyle_ComboBox = new FComboBoxStyle(FCoreStyle::Get().GetWidgetStyle<FComboBoxStyle>("ComboBox"));
 	DefaultStyle_SpinBox = new FSpinBoxStyle(FCoreStyle::Get().GetWidgetStyle<FSpinBoxStyle>("SpinBox"));

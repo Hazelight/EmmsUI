@@ -30,6 +30,7 @@
 #include "AngelscriptBinds.h"
 #include "AngelscriptDocs.h"
 #include "AngelscriptManager.h"
+#include "Components/EditableText.h"
 
 FEmmsAttributeSpecification* UEmmsWidgetHelpers::Attr_UWidget_RenderTransform;
 FEmmsAttributeSpecification* UEmmsWidgetHelpers::Attr_UWidget_ToolTipText;
@@ -49,6 +50,9 @@ FEmmsAttributeSpecification* UEmmsWidgetHelpers::Attr_USizeBox_MaxDesiredHeight;
 FEmmsAttributeSpecification* UEmmsWidgetHelpers::Attr_USizeBox_MinAspectRatio;
 FEmmsAttributeSpecification* UEmmsWidgetHelpers::Attr_USizeBox_MaxAspectRatio;
 FEmmsAttributeSpecification* UEmmsWidgetHelpers::Attr_UEditableTextBox_Text;
+FEmmsAttributeSpecification* UEmmsWidgetHelpers::Attr_UEditableText_Text;
+FEmmsAttributeSpecification* UEmmsWidgetHelpers::Attr_UEditableText_HintText;
+FEmmsAttributeSpecification* UEmmsWidgetHelpers::Attr_UEditableText_WidgetStyle;
 FEmmsAttributeSpecification* UEmmsWidgetHelpers::Attr_UBorder_Background;
 FDelegateProperty* UEmmsWidgetHelpers::Event_UBorder_OnMouseButtonDownEvent;
 FDelegateProperty* UEmmsWidgetHelpers::Event_UBorder_OnMouseDoubleClickEvent;
@@ -400,6 +404,45 @@ FEmmsWidgetHandle UEmmsWidgetHelpers::EditableTextBox(FString& OutTextValue)
 	if (!AttributeState.CurrentValue.IsEmpty() && ((FText*)AttributeState.CurrentValue.GetDataPtr())->EqualTo(NewValue))
 		OutTextValue = CastChecked<UEditableTextBox>(Widget.Element->UMGWidget)->GetText().ToString();
 	AttributeState.SetPendingValue(Attr_UEditableTextBox_Text, &NewValue);
+	
+	return Widget;
+}
+
+FEmmsWidgetHandle UEmmsWidgetHelpers::EditableText(FString& OutTextValue, const FString& HintText, float FontSize, const FLinearColor& Color, bool bBold)
+{
+	FEmmsWidgetHandle Widget = UEmmsStatics::AddWidget(UEditableText::StaticClass());
+	if (Widget.Element == nullptr)
+		return Widget;
+
+	auto& AttributeState = Widget.Element->Attributes.FindOrAdd(Attr_UEditableText_Text);
+
+	FText NewValue = FText::FromString(OutTextValue);
+	if (!AttributeState.CurrentValue.IsEmpty() && ((FText*)AttributeState.CurrentValue.GetDataPtr())->EqualTo(NewValue))
+		OutTextValue = CastChecked<UEditableText>(Widget.Element->UMGWidget)->GetText().ToString();
+	AttributeState.SetPendingValue(Attr_UEditableText_Text, &NewValue);
+
+	if (FText* Value = GetPartialPendingAttribute<FText>(Widget, Attr_UEditableText_HintText))
+	{
+		*Value = FText::FromString(HintText);
+	}
+	
+	if (FontSize != 0 || bBold || Color != FLinearColor::White)
+	{
+		if (FEditableTextStyle* Value = GetPartialPendingAttribute<FEditableTextStyle>(Widget, Attr_UEditableText_WidgetStyle))
+		{
+			*Value = UEmmsDefaultWidgetStyles::GetDefaultEditableTextStyle();
+			FSlateFontInfo FontValue = UEmmsDefaultWidgetStyles::GetDefaultFont();
+			if (FontSize != 0)
+				FontValue.Size = FontSize;
+			if (bBold)
+				FontValue.TypefaceFontName = NAME_Typeface_Bold;
+			if (Color != FLinearColor::White)
+				Value->ColorAndOpacity = Color;
+			
+			Value->Font = FontValue;
+		}
+	}
+
 
 	return Widget;
 }
@@ -1216,6 +1259,12 @@ AS_FORCE_LINK const FAngelscriptBinds::FBind Bind_EmmsWidgetHelpers((int32)FAnge
 		FAngelscriptBinds::BindGlobalFunction("mm<UEditableTextBox> EditableTextBox(FString&out OutValue)", &UEmmsWidgetHelpers::EditableTextBox);
 		SCRIPT_BIND_DOCUMENTATION("Add an editable text box widget. The out string value will be set to whatever the user has entered");
 
+		UEmmsWidgetHelpers::Attr_UEditableText_Text = GetWidgetAttrSpec("Text", UEditableText::StaticClass());
+		UEmmsWidgetHelpers::Attr_UEditableText_HintText = GetWidgetAttrSpec("HintText", UEditableText::StaticClass());
+		UEmmsWidgetHelpers::Attr_UEditableText_WidgetStyle = GetWidgetAttrSpec("WidgetStyle", UEditableText::StaticClass());
+		FAngelscriptBinds::BindGlobalFunction("mm<UEditableText> EditableText(FString&out OutValue, const FString& HintText, float32 FontSize = 0, const FLinearColor& Color = FLinearColor::White, bool bBold = false)", &UEmmsWidgetHelpers::EditableText);
+		SCRIPT_BIND_DOCUMENTATION("Add an editable text box widget. The out string value will be set to whatever the user has entered");
+		
 		UEmmsWidgetHelpers::Attr_USpinBox_Value = GetWidgetAttrSpec("Value", USpinBox::StaticClass());
 		UEmmsWidgetHelpers::Attr_USpinBox_MinValue = GetWidgetAttrSpec("MinValue", USpinBox::StaticClass());
 		UEmmsWidgetHelpers::Attr_USpinBox_MinValue->ResetToDefaultFunction = [](FEmmsAttributeSpecification*, void* Container) { ((USpinBox*)Container)->ClearMinValue(); };
