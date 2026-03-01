@@ -24,6 +24,8 @@ public:
 	FString WindowTitle;
 	UPROPERTY(EditDefaultsOnly, Category = "Window")
 	FVector2D DefaultWindowSize = FVector2D(500, 500);
+	UPROPERTY(EditDefaultsOnly, Category = "Window")
+	bool bAlwaysOnTop = false;
 
 	UPROPERTY()
 	UMMWidget* MMWidget;

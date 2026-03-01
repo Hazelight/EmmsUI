@@ -18,6 +18,7 @@ void UMMPopupWindow::Spawn()
 	SlateWindow = SNew(SWindow)
 		.Title(FText::FromString(WindowTitle))
 		.ClientSize(FVector2f(DefaultWindowSize))
+		.IsTopmostWindow(bAlwaysOnTop)
 	;
 
 	SlateWindow->GetOnWindowClosedEvent().AddLambda(
