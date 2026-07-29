@@ -235,6 +235,15 @@ AS_FORCE_LINK const FAngelscriptBinds::FBind Bind_EmmsWidgets((int32)FAngelscrip
 					FAngelscriptTypeUsage AccessorUsage = PropUsage;
 					AccessorUsage.bIsConst = false;
 
+					// Avoid parsing failure for double const when generating getter/setter functions for TObjectPtr<const UObject> variable under UPROPERTY
+					if (AccessorUsage.Type.Get()->GetAngelscriptTypeName() == "TObjectPtr")
+					{
+						for (FAngelscriptTypeUsage& CurrentSubType : AccessorUsage.SubTypes)
+						{
+							CurrentSubType.bIsConst = false;
+						}
+					}
+
 					FString PropertyName = GetPropertyCanonicalName(Property);
 					if (PropertyName == TEXT("Slot"))
 						continue;
