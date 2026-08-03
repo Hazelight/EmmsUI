@@ -11,7 +11,6 @@ FName FEmmsAttributeSpecification::GetAttributeName() const
 		case EEmmsAttributeType::Property:
 		case EEmmsAttributeType::BitField:
 			return AttributeProperty->GetFName();
-		break;
 	}
 
 	check(false);
@@ -111,7 +110,6 @@ bool FEmmsAttributeSpecification::IsCompatibleWithContainer(UObject* Object) con
 		case EEmmsAttributeType::Property:
 		case EEmmsAttributeType::BitField:
 			return Object->IsA(AttributeProperty->GetOwnerClass());
-		break;
 	}
 
 	return false;
